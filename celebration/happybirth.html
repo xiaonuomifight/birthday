@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <title>happy birthday</title>
+	<script type="text/javascript">
+	  $(document).ready(
+	    function() {
+		  $("#btn_send").bind("click", doSend);
+		}
+	  );
+	  function doSend() {
+	    var bestwishStr = $("#best_wishes_value").val();
+		var p_json = {"wishes_str" : bestwishStr};
+        $.post(
+           "../happybirthday", 
+           { para : p_json }, 
+           function(data) {
+		      alert(data);
+           });
+	  }
+	
+	</script>
+  </head>
+  <body> 
+    <center>
+      <h1>happy birthday</h1></br>
+	  <nav class="navbar navbar-expanded navbar-light bg-light">
+        <ul class="nav nav-pills">
+          <li class="nav-item">
+		    <a class="nav-link active" href="../index.html">Home</a>
+		  </li>
+		  <li class="nav-item">
+		    <div>
+			  <input id="best_wishes_value" type="text" placeholder="祝福语" style="border:1px solid #ccc;">			  
+			</div>
+			<div>
+			   <a id="btn_send" href="#">send</a>
+			</div>
+		  </li>
+		 </ul>
+      </nav><br>
+    </center>
+  </body>
+</html>
