@@ -141,7 +141,15 @@ class HTTPServer:
         builder.set_status("200", "OK")
         builder.add_header("Connection", "close")
         builder.add_header("Content-Type", mime_types["html"])
-        builder.set_content(get_file_contents("MyForm.html"))
+        print("---requested_file:" + requested_file)
+        if(requested_file == "happybirthday"):
+            for i in data:
+                print("----data:" + i)
+            
+            builder.set_content("success")
+        else:
+            builder.set_content("unknown")
+            
         return builder.build()
     def method_not_allowed(self):
         """
