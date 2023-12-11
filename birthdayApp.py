@@ -10,7 +10,7 @@ import tkinter as tk
 
 import random
 from PIL import ImageTk, Image
-
+import numpy as np
 
 # 读取Excel表格
 #df = pd.read_excel("employee.xlsx")
@@ -198,8 +198,8 @@ def load_pictures():
 
 
 df = pd.read_excel(r'related_files/celebration_text.xlsx')
-celebration_text_array = df['生日祝福'].values
-
+celebration_text_array_base = df['生日祝福'].values
+celebration_text_array = celebration_text_array_base
 # celebration_text_num = len(celebration_text_array)
 # celebration_text1 = '天天开心！天天开心！天天开心！天天开心！天天开心！天天开心！天天开心！'
 # celebration_text2 = '祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！祝福！'
@@ -221,7 +221,7 @@ text1_font = random.choice(text_font_array)
 text2_font = random.choice(text_font_array)
 text3_font = random.choice(text_font_array)
 
-text_move_speed_array = [1,2,3,4,5]
+text_move_speed_array = [1,3,5,7,9]
 text1_move_speed = random.choice(text_move_speed_array)
 text2_move_speed = random.choice(text_move_speed_array)
 text3_move_speed = random.choice(text_move_speed_array)
@@ -240,6 +240,26 @@ def on_resize(evt):  # 维持窗口透明背景
     canvas.create_rectangle(0, 0, canvas.winfo_width(), canvas.winfo_height(), fill=TRANSCOLOUR, outline=TRANSCOLOUR)
 
 time_count = 0
+time_count_10s = 0
+
+def get_file_contents(file_name):
+    #print("get_file_contents:" + file_name)
+    with open(file_name, 'r', encoding='utf-8') as f:
+        return f.read()
+    
+#从文本文件中更新祝福语到祝福语队列
+def update_celebration_text_array():
+    global celebration_text_array
+
+    celebration_text_array = celebration_text_array_base.copy()
+    reord_file_content = get_file_contents(r'record/record_file.txt')
+    reord_file_content_arry = reord_file_content.split('\n')
+    reord_file_content_arry.pop()
+    text_arry_size_old = celebration_text_array.shape[0]
+    #print(text_arry_size_old)
+    celebration_text_array.resize(text_arry_size_old + len(reord_file_content_arry),) 
+    celebration_text_array[text_arry_size_old:]  = reord_file_content_arry
+    
 
 def task():  # 每隔3ms移动弹幕文本位置
     global text1_X_axis,text2_X_axis,text3_X_axis,image_X_axis
@@ -250,13 +270,20 @@ def task():  # 每隔3ms移动弹幕文本位置
     global text1_finnal_position,text2_finnal_position,text3_finnal_position
     global name_all
     global time_count
+    global time_count_10s
+
     #global image_default
+    if time_count_10s < 1000:
+        time_count_10s += 1
+    else:
+        time_count_10s = 0
+        update_celebration_text_array()
 
     if time_count < 100000:
         time_count = time_count + 1
     else:
         time_count = 0
-        # 读取当天时间
+        # 读取当天时间 间隔约26分钟
         today = datetime.date.today()
         today_str = today.strftime("%m-%d")  # 转换成字符串格式
 
@@ -334,7 +361,7 @@ def task():  # 每隔3ms移动弹幕文本位置
         text3_move_speed = random.choice(text_move_speed_array)
         text3_finnal_position = random.choice(text_finnal_position_array)
 
-    tk.after(1, task)
+    tk.after(10, task)
 
 
 def on_drag(event):
@@ -437,8 +464,8 @@ load_pictures()
 #image = PhotoImage(file="image.png")
 
 tk.bind('<Configure>', on_resize)  # tkinter会自动重绘窗口导致透明背景失效, 重写事件维持透明背景
-
-tk.after(3, task)  # 递归循环,每隔10ms移动弹幕文本位置
+update_celebration_text_array()
+tk.after(10, task)  # 递归循环,每隔10ms移动弹幕文本位置
 
 
 tk.mainloop()

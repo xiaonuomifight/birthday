@@ -41,6 +41,8 @@ mime_types = {
     "json": "application/json"
 }
 
+record_file_path = "record\\record_file.txt"
+
 def get_file_mime_type(file_extension):
     #print("---get_file_mime_type:" + file_extension)
     mime_type = mime_types[file_extension]
@@ -57,6 +59,9 @@ class HTTPServer:
         self.port = port
         self.working_dir = os.path.dirname(os.path.realpath(__file__))
         self.working_dir += '\\';
+        self.record_file_path = self.working_dir;
+        self.record_file_path += record_file_path;
+        
         self.setup_socket()
         self.accept()
 
@@ -144,11 +149,13 @@ class HTTPServer:
         builder.set_status("200", "OK")
         builder.add_header("Connection", "close")
         builder.add_header("Content-Type", mime_types["json"])
-        print("---requested_file:" + requested_file)
+        #print("---requested_file:" + requested_file)
         if(requested_file == "happybirthday"):
             #print("----data[-1]" + data[-1])
             json_data = json.loads(data[-1])
-            print("wishes_str is:" + json_data["wishes_str"])
+            wishes_content = json_data["wishes_str"]
+            #print("wishes_str is:" + json_data["wishes_str"])
+            self.add_string_to_file(wishes_content, self.record_file_path)
             #for i in data:
             #    print("----data:" + i)
             
@@ -193,7 +200,12 @@ class HTTPServer:
         builder.add_header("Content-Type", mime_types["html"])
         builder.set_content(get_file_contents("403.html"))
         return builder.build()
-    
+        
+    # TODO: add string to target file
+    def add_string_to_file(self, string_content, record_file_path):
+        with open(record_file_path, 'a', encoding='utf-8') as f:        
+            f.write(string_content + "\n")     
+        
 class ResponseBuilder:
     def __init__(self):
         """

@@ -1,1 +1,1 @@
-python firstToStart.py
+python birthdayApp.py
