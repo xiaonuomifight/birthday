@@ -12,13 +12,22 @@
 	  );
 	  function doSend() {
 	    var bestwishStr = $("#best_wishes_value").val();
-		var p_json = {"wishes_str" : bestwishStr};
-        $.post(
-           "../happybirthday", 
-           { para : p_json }, 
-           function(data) {
-		      alert(data);
-           });
+		var dataReq = {"wishes_str" : bestwishStr};
+		var dataReqJson = JSON.stringify(dataReq);
+        $.ajax("../happybirthday", {
+	      method: 'POST',
+		  contentType: "application/json",
+		  dataType: 'text',
+		  data: dataReqJson,
+		  success:function(result){
+		    alert(result)
+		  },
+		  error:function(err){
+		    alert("failed!")
+		  }
+		
+		});
+           
 	  }
 	
 	</script>

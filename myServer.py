@@ -4,8 +4,9 @@ import os
 from sre_constants import SRE_FLAG_VERBOSE
 import stat
 from urllib.parse import unquote
-
 from threading import Thread
+import json
+
 
 NEWLINE = "\r\n"
 
@@ -37,6 +38,7 @@ mime_types = {
     "jpeg": "image/jpeg",
     "txt": "text/plain",
     "ico": "image/x-icon",
+    "json": "application/json"
 }
 
 def get_file_mime_type(file_extension):
@@ -140,13 +142,16 @@ class HTTPServer:
         builder = ResponseBuilder()
         builder.set_status("200", "OK")
         builder.add_header("Connection", "close")
-        builder.add_header("Content-Type", mime_types["html"])
+        builder.add_header("Content-Type", mime_types["json"])
         print("---requested_file:" + requested_file)
         if(requested_file == "happybirthday"):
-            for i in data:
-                print("----data:" + i)
+            #print("----data[-1]" + data[-1])
+            json_data = json.loads(data[-1])
+            print("wishes_str is:" + json_data["wishes_str"])
+            #for i in data:
+            #    print("----data:" + i)
             
-            builder.set_content("success")
+            builder.set_content("发送成功！")
         else:
             builder.set_content("unknown")
             
