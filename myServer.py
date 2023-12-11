@@ -42,6 +42,7 @@ mime_types = {
 }
 
 def get_file_mime_type(file_extension):
+    #print("---get_file_mime_type:" + file_extension)
     mime_type = mime_types[file_extension]
     return mime_type if mime_type is not None else "text/plain"
 
@@ -113,10 +114,10 @@ class HTTPServer:
         requested_file = self.working_dir + requested_file
         #print(requested_file)
         if (not os.path.exists(requested_file)):
-            print("file not exists")
+            print("file not exists:" + requested_file)
             return self.resource_not_found()
         elif (not has_permission_other(requested_file)):
-            print("file no permission")
+            print("file no permission:" + requested_file)
             return self.resource_forbidden()
         else:
             #print("start read file")
@@ -133,7 +134,7 @@ class HTTPServer:
 
             builder.add_header("Connection", "close")
             #print("----builder.add_header Connection close")
-            builder.add_header("Content-Type", get_file_mime_type(requested_file.split(".")[1]))
+            builder.add_header("Content-Type", get_file_mime_type(requested_file.split(".")[-1]))
             #print("----return builder.build()")
             return builder.build()
     # TODO: Write the response to a POST request
