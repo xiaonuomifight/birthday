@@ -57,8 +57,9 @@ class HTTPServer:
         print(f"Server started. Listening at http://{host}:{port}/")
         self.host = host
         self.port = port
-        self.working_dir = os.path.dirname(os.path.realpath(__file__))
-        self.working_dir += '\\';
+        self.working_dir = os.getcwd()
+        self.working_dir += '\\'
+        print("workpath:" + self.working_dir)
         self.record_file_path = self.working_dir;
         self.record_file_path += record_file_path;
         
