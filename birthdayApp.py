@@ -271,7 +271,8 @@ def task():  # 每隔3ms移动弹幕文本位置
     global name_all
     global time_count
     global time_count_10s
-
+    global today_str
+    
     #global image_default
     if time_count_10s < 1000:
         time_count_10s += 1
