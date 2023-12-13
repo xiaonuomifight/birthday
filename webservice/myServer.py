@@ -36,7 +36,7 @@ mime_types = {
     "png": "image/png",
     "jpg": "image/jpg",
     "jpeg": "image/jpeg",
-    "txt": "text/plain",
+    "txt": "text/html;charset=utf-8",
     "ico": "image/x-icon",
     "json": "application/json"
 }
@@ -161,6 +161,10 @@ class HTTPServer:
             #    print("----data:" + i)
             
             builder.set_content("发送成功！")
+            
+        elif(requested_file == "recordfile"):
+            builder.set_content(get_file_contents(r'record/record_file.txt'))            
+            
         else:
             builder.set_content("unknown")
             

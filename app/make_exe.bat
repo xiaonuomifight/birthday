@@ -1,0 +1,1 @@
+pyinstaller birthdayApp.spec
