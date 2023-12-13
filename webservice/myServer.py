@@ -47,6 +47,8 @@ def get_file_mime_type(file_extension):
     #print("---get_file_mime_type:" + file_extension)
     mime_type = mime_types[file_extension]
     return mime_type if mime_type is not None else "text/plain"
+    
+
 
 class HTTPServer:
     """
@@ -54,6 +56,11 @@ class HTTPServer:
     """
 
     def __init__(self, host="localhost", port=9001, directory="/"):
+        config_info = get_file_contents(r'config/config.json')
+        info_json = json.loads(config_info)
+        host = info_json["ip"]
+        port = info_json["port"]
+    
         print(f"Server started. Listening at http://{host}:{port}/")
         self.host = host
         self.port = port
