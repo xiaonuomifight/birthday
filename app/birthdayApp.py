@@ -190,10 +190,10 @@ def load_pictures():
             except Exception as e:
                 print('%s缺少照片：:%s' % (birthday_name_array[i - 1], e))
 
-                image_png = 'related_files/photos/default_image.jpg'
-                image[i - 1] = PhotoImage(file=image_png)
-                image[i - 1] = image[i - 1].subsample(2, 2)  # 缩放
-
+                image_png = 'related_files/photos/default_image1.jpg'
+                img = Image.open(image_png)
+                resized_img = img.resize((200, 275))
+                image[i - 1] = ImageTk.PhotoImage(resized_img)                
 
 
 
