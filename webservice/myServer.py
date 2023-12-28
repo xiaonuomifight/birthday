@@ -6,6 +6,7 @@ import stat
 from urllib.parse import unquote
 from threading import Thread
 import json
+from tcpServer import TcpServer
 
 
 NEWLINE = "\r\n"
@@ -55,7 +56,7 @@ class HTTPServer:
     Our actual HTTP server which will service GET and POST requests.
     """
 
-    def __init__(self, host="localhost", port=9001, directory="/"):
+    def __init__(self, host="localhost", port=9001, directory="/", tcpsvr = 0):
         config_info = get_file_contents(r'config/config.json')
         info_json = json.loads(config_info)
         host = info_json["ip"]
@@ -66,9 +67,10 @@ class HTTPServer:
         self.port = port
         self.working_dir = os.getcwd()
         self.working_dir += '\\'
+        self.tcpSvr = tcpsvr
         print("workpath:" + self.working_dir)
-        self.record_file_path = self.working_dir;
-        self.record_file_path += record_file_path;
+        self.record_file_path = self.working_dir
+        self.record_file_path += record_file_path
         
         self.setup_socket()
         self.accept()
@@ -94,6 +96,7 @@ class HTTPServer:
 
     def accept_request(self, client_sock, client_addr):
         #print("-------accept_request")
+        
         data = client_sock.recv(4096)
         req = data.decode("utf-8")
         #print("-------req:" + req)
@@ -165,9 +168,12 @@ class HTTPServer:
             #print("wishes_str is:" + json_data["wishes_str"])
             self.add_string_to_file(wishes_content, self.record_file_path)
             #for i in data:
-            #    print("----data:" + i)
-            
+            #    print("----data:" + i)            
             builder.set_content("发送成功！")
+            try :                
+                self.tcpSvr.client.send(wishes_content.encode("utf-8"))
+            except Exception as e:
+                print("exception info: %s" %e)
             
         elif(requested_file == "recordfile"):
             builder.set_content(get_file_contents(r'record/record_file.txt'))            
@@ -260,6 +266,9 @@ class ResponseBuilder:
     
 
 if __name__=="__main__":
-    svr = HTTPServer()
+    tcpSvr = TcpServer()
+    th = Thread(target=tcpSvr.startSever)
+    th.start()
+    httpSvr = HTTPServer(tcpsvr= tcpSvr)
 
     
